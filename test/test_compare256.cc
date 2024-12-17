@@ -65,16 +65,15 @@ TEST_COMPARE256(c, compare256_c, 1)
 TEST_COMPARE256(native, native_compare256, 1)
 #else
 
-#if BYTE_ORDER == LITTLE_ENDIAN && OPTIMAL_CMP >= 32
+#if defined(UNALIGNED_OK) && BYTE_ORDER == LITTLE_ENDIAN
 TEST_COMPARE256(unaligned_16, compare256_unaligned_16, 1)
-#  if defined(HAVE_BUILTIN_CTZ)
+#ifdef HAVE_BUILTIN_CTZ
 TEST_COMPARE256(unaligned_32, compare256_unaligned_32, 1)
-#  endif
-#  if defined(HAVE_BUILTIN_CTZLL) && OPTIMAL_CMP >= 64
-TEST_COMPARE256(unaligned_64, compare256_unaligned_64, 1)
-#  endif
 #endif
-
+#if defined(UNALIGNED64_OK) && defined(HAVE_BUILTIN_CTZLL)
+TEST_COMPARE256(unaligned_64, compare256_unaligned_64, 1)
+#endif
+#endif
 #if defined(X86_SSE2) && defined(HAVE_BUILTIN_CTZ)
 TEST_COMPARE256(sse2, compare256_sse2, test_cpu_features.x86.has_sse2)
 #endif
