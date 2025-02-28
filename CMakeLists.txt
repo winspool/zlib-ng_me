@@ -428,6 +428,9 @@ if(NOT HAVE_STRERROR)
     add_definitions(-DNO_STRERROR)
 endif()
 
+#
+# Check for an aligned allocation strategy
+#
 set(CMAKE_REQUIRED_DEFINITIONS -D_POSIX_C_SOURCE=200112L)
 check_symbol_exists(posix_memalign stdlib.h HAVE_POSIX_MEMALIGN)
 if(HAVE_POSIX_MEMALIGN)
@@ -442,6 +445,21 @@ if(HAVE_ALIGNED_ALLOC)
 endif()
 set(CMAKE_REQUIRED_DEFINITIONS)
 
+check_symbol_exists(memalign malloc.h HAVE_MEMALIGN)
+if(HAVE_MEMALIGN)
+    add_definitions(-DHAVE_MEMALIGN)
+endif()
+set(CMAKE_REQUIRED_DEFINITIONS)
+
+check_symbol_exists(_aligned_malloc malloc.h HAVE__ALIGNED_MALLOC)
+if(HAVE__ALIGNED_MALLOC)
+    add_definitions(-DHAVE__ALIGNED_MALLOC)
+endif()
+set(CMAKE_REQUIRED_DEFINITIONS)
+
+#
+# Check whether a sanitizer was requested
+#
 if(WITH_SANITIZER STREQUAL "Address")
     add_address_sanitizer()
 elseif(WITH_SANITIZER STREQUAL "Memory")
